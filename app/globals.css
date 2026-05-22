@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@1,600&family=Nunito:wght@400;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sky: #B8D4E8;
+  --sky-deep: #7CA8C9;
+  --lilac: #D4C4E8;
+  --lilac-deep: #A892C9;
+  --cream: #FAF6EE;
+  --cream-warm: #F5EFE3;
+  --ink: #2D2D3A;
+  --ink-soft: #6B6B7A;
+  --mist: #E8E4DC;
+  --peach: #F5C9B8;
+  --mint: #C4E8D4;
+  --butter: #F5E8B8;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--cream-warm);
+  color: var(--ink);
+  font-family: 'Nunito', sans-serif;
+  min-height: 100dvh;
+}
+
+.font-fraunces {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* smooth momentum scrolling on iOS */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
