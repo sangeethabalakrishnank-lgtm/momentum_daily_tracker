@@ -24,7 +24,7 @@ function rowToRecord(page: any): CheckinRecord {
     initiative: p.Initiative?.select?.name ?? '',
     completed: p.Completed?.checkbox ?? false,
     count: p.Count?.number ?? 0,
-    mood: p.Mood?.select?.name,
+    mood: p.Mood?.rich_text?.[0]?.plain_text,
     note: p.Note?.rich_text?.[0]?.plain_text,
     week: p.Week?.rich_text?.[0]?.plain_text ?? '',
   }
@@ -78,7 +78,7 @@ export async function upsertCheckin(params: {
     Week: { rich_text: [{ text: { content: week } }] },
   }
 
-  if (mood) props.Mood = { select: { name: mood } }
+  if (mood) props.Mood = { rich_text: [{ text: { content: mood } }] }
   if (note !== undefined) props.Note = { rich_text: [{ text: { content: note } }] }
 
   if (existing.results.length > 0) {
