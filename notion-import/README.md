@@ -1,7 +1,7 @@
 # Notion Database Import
 
 ## Quick Setup (CSV Import)
-
+## New data
 ### 1. Import the CSV
 1. Open Notion → create a new page
 2. Type `/import` → select **CSV**
