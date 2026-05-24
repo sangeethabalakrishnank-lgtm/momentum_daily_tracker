@@ -1,24 +1,23 @@
 import { INITIATIVES } from '@/lib/initiatives'
 
-// Map existing initiative IDs to the pivoted goal direction
-const GOAL_MAP: Record<string, { goal: string; horizon: '2-yr' | '5-yr' }> = {
-  gym:      { goal: 'Energy + discipline baseline',          horizon: '2-yr' },
-  linkedin: { goal: 'Personal brand → strategy pivot',       horizon: '2-yr' },
-  apply:    { goal: 'Qualification for strategy/org design', horizon: '5-yr' },
-  automate: { goal: 'Skill + future revenue',                horizon: '5-yr' },
-  blog:     { goal: 'Thought leadership · long-form proof',  horizon: '2-yr' },
+const GOAL_MAP: Record<string, { goal: string; horizon: '12-mo' | '2-yr' | '7-yr' }> = {
+  gym:      { goal: 'Strength + energy baseline · stamina for the grind', horizon: '12-mo' },
+  linkedin: { goal: 'AI-PM brand · recruiter magnet',                     horizon: '12-mo' },
+  apply:    { goal: 'Land Senior PM role · ₹70 LPA',                      horizon: '12-mo' },
+  automate: { goal: 'AI/automation moat · recognised AI-PM voice',        horizon: '2-yr' },
+  blog:     { goal: 'Recognised AI-PM voice · long-form proof',           horizon: '2-yr' },
 }
 
-const VISION_2YR = [
-  { title: 'Visible personal brand in HR tech & org design', sub: 'LinkedIn presence + blog → recognised voice' },
-  { title: 'Ship a working side product',                    sub: 'To-do app live, used by real people' },
-  { title: 'Strength + energy baseline',                     sub: 'Gym ≥ 4×/week as a non-negotiable' },
+const VISION_12MO = [
+  { title: 'Land Senior PM at AI-forward B2B SaaS', sub: '₹70 LPA total comp · the hard deadline' },
+  { title: 'Build an AI/automation moat',           sub: 'Hands-on AI lab → portfolio of shipped automations' },
+  { title: 'Strength + energy baseline',            sub: 'Gym ≥ 4×/week as a non-negotiable' },
 ]
 
-const VISION_5YR = [
-  { title: 'Pivot into strategy / org design',  sub: 'Leverage Workday background → consulting or senior strategy role' },
-  { title: 'Independent revenue stream',         sub: 'Products + automations earning on the side' },
-  { title: 'Be known, not just competent',       sub: 'Online and offline reputation in your niche' },
+const VISION_7YR = [
+  { title: 'Product Head role',                  sub: 'Leading PMs, shaping org strategy' },
+  { title: 'Recognised AI-PM voice',             sub: 'Writing, speaking, building in public' },
+  { title: 'Optional side income',               sub: 'Consulting, content, or product bets' },
 ]
 
 export default function GoalsPage() {
@@ -26,6 +25,47 @@ export default function GoalsPage() {
 
   return (
     <div className="px-4 pt-5">
+      {/* Why hero — ₹70 LPA pinned */}
+      <div
+        style={{
+          background: 'var(--charcoal)',
+          borderRadius: 18,
+          padding: '22px 20px',
+          color: 'var(--cream)',
+          marginBottom: 18,
+        }}
+      >
+        <p
+          className="font-fraunces italic mb-1.5 uppercase"
+          style={{ fontSize: 11, fontWeight: 300, color: 'var(--sage-light)', letterSpacing: '0.12em' }}
+        >
+          12-month target
+        </p>
+        <p
+          className="font-fraunces leading-none mb-1.5"
+          style={{ fontSize: 36, fontWeight: 800, color: '#fff' }}
+        >
+          ₹70 LPA
+        </p>
+        <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--cream)' }}>
+          Senior PM · AI-forward B2B SaaS
+        </p>
+        <div
+          style={{
+            marginTop: 12,
+            background: 'rgba(168,197,170,0.15)',
+            borderRadius: 10,
+            padding: '8px 12px',
+            fontSize: 11,
+            color: 'var(--sage-light)',
+            fontWeight: 700,
+            lineHeight: 1.5,
+          }}
+        >
+          🗓 Runway closes ~May 2027 · baby planning in ~12 months · hard deadline.
+        </div>
+      </div>
+
       <p
         className="font-fraunces uppercase mb-3"
         style={{ fontSize: 12, fontWeight: 600, color: 'var(--mid-grey)', letterSpacing: '0.12em' }}
@@ -33,7 +73,7 @@ export default function GoalsPage() {
         Why you're doing this
       </p>
 
-      {/* 2-Year Vision */}
+      {/* 12-month vision */}
       <div
         style={{
           background: 'var(--warm-white)',
@@ -47,9 +87,9 @@ export default function GoalsPage() {
           className="font-fraunces italic uppercase mb-3"
           style={{ fontSize: 11, fontWeight: 600, color: 'var(--sage-dark)', letterSpacing: '0.12em' }}
         >
-          🎯 2-Year Vision
+          🎯 12-Month Plan
         </p>
-        {VISION_2YR.map((v, i) => (
+        {VISION_12MO.map((v, i) => (
           <div key={i} className="flex items-start gap-2.5 mb-2.5 last:mb-0">
             <div
               style={{
@@ -69,7 +109,7 @@ export default function GoalsPage() {
         ))}
       </div>
 
-      {/* 5-Year Vision */}
+      {/* 7-year vision */}
       <div
         style={{
           background: 'var(--warm-white)',
@@ -83,9 +123,9 @@ export default function GoalsPage() {
           className="font-fraunces italic uppercase mb-3"
           style={{ fontSize: 11, fontWeight: 600, color: 'var(--sage-dark)', letterSpacing: '0.12em' }}
         >
-          🌟 5-Year Vision
+          🌟 7-Year Vision
         </p>
-        {VISION_5YR.map((v, i) => (
+        {VISION_7YR.map((v, i) => (
           <div key={i} className="flex items-start gap-2.5 mb-2.5 last:mb-0">
             <div
               style={{
