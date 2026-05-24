@@ -4,8 +4,8 @@
   "description": "Daily habit tracker — 12 months of focused runway",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F5EFE3",
-  "theme_color": "#B8D4E8",
+  "background_color": "#FAFAF7",
+  "theme_color": "#0A0A0A",
   "orientation": "portrait",
   "icons": [
     {

@@ -1,20 +1,30 @@
+'use client'
+
 import { getQuoteOfDay } from '@/lib/quotes'
 
 export default function QuoteCard() {
-  const quote = getQuoteOfDay()
+  const q = getQuoteOfDay()
 
   return (
     <div
-      className="rounded-2xl px-5 py-4 mb-5"
-      style={{ background: 'var(--cream)', border: '1px solid var(--mist)' }}
+      className="rounded-2xl px-5 py-4 mb-4"
+      style={{
+        background: 'var(--card)',
+        border: '2.5px solid var(--line)',
+        borderLeft: '6px solid var(--orange)',
+      }}
     >
-      <p className="font-fraunces text-base leading-relaxed mb-2"
-        style={{ color: 'var(--ink)' }}>
-        &ldquo;{quote.text}&rdquo;
+      <p
+        className="font-fraunces text-base leading-snug"
+        style={{ color: 'var(--ink)' }}
+      >
+        &ldquo;{q.text}&rdquo;
       </p>
-      <p className="font-nunito text-xs font-700 tracking-widest uppercase"
-        style={{ color: 'var(--ink-soft)' }}>
-        — {quote.author}
+      <p
+        className="font-nunito text-xs mt-2 uppercase tracking-widest"
+        style={{ color: 'var(--ink-soft)', fontWeight: 800 }}
+      >
+        — {q.author}
       </p>
     </div>
   )

@@ -1,22 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@1,600&family=Nunito:wght@400;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@1,600;1,700&family=Nunito:wght@400;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --sky: #B8D4E8;
-  --sky-deep: #7CA8C9;
-  --lilac: #D4C4E8;
-  --lilac-deep: #A892C9;
-  --cream: #FAF6EE;
-  --cream-warm: #F5EFE3;
-  --ink: #2D2D3A;
-  --ink-soft: #6B6B7A;
-  --mist: #E8E4DC;
-  --peach: #F5C9B8;
-  --mint: #C4E8D4;
-  --butter: #F5E8B8;
+  /* Bold three-color system: orange, blue, black */
+  --orange: #FF6A1F;          /* primary action, accents, fire */
+  --orange-deep: #D14E0A;     /* hover, pressed */
+  --orange-soft: #FFE8DC;     /* tag bg, subtle highlight */
+
+  --blue: #1E40AF;            /* secondary, progress, links */
+  --blue-deep: #0F2A6B;       /* emphasis, dark */
+  --blue-soft: #DBE5FF;       /* tag bg */
+
+  --ink: #0A0A0A;             /* primary text, all heavy weights */
+  --ink-soft: #4A4A4A;        /* secondary text */
+  --ink-faint: #8A8A8A;       /* tertiary, hints */
+
+  --bg: #FAFAF7;              /* page bg, slightly off-white */
+  --card: #FFFFFF;            /* cards */
+  --line: #1A1A1A;            /* heavy borders (this is the BOLD bit) */
+  --rule: #E8E8E5;            /* subtle dividers */
+
+  --done: #14532D;            /* completed text */
+  --done-bg: #DCFCE7;         /* completed bg subtle */
 }
 
 * {
@@ -24,19 +32,19 @@
 }
 
 body {
-  background-color: var(--cream-warm);
+  background-color: var(--bg);
   color: var(--ink);
   font-family: 'Nunito', sans-serif;
+  font-weight: 700;
   min-height: 100dvh;
 }
 
 .font-fraunces {
   font-family: 'Fraunces', serif;
   font-style: italic;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* smooth momentum scrolling on iOS */
 html {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;

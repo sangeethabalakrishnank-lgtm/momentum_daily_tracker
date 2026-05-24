@@ -16,7 +16,7 @@ const DAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
 
 const SUNDAY_PROMPTS = [
   'Which Tier 1 initiative slipped this week, and why?',
-  'What\'s the ONE thing that\'ll move the ₹70 LPA needle next week?',
+  "What's the ONE thing that'll move the ₹70 LPA needle next week?",
   'Anything to remove from the list?',
 ]
 
@@ -45,7 +45,7 @@ export default function WeekPage() {
 
   const dayBars = days.map((d, i) => {
     const dayRecs = records.filter(r => r.date === d && r.completed)
-    const maxForDay = INITIATIVES.reduce((s, ini) => s + ini.target, 0)
+    const maxForDay = INITIATIVES.length
     return {
       label: DAY_LABELS[i],
       pct: maxForDay ? (dayRecs.length / maxForDay) * 100 : 0,
@@ -58,23 +58,33 @@ export default function WeekPage() {
       {/* Hero */}
       <div
         className="rounded-2xl px-5 py-5 mb-5"
-        style={{ background: 'var(--ink)', color: 'white' }}
+        style={{ background: 'var(--ink)', color: 'white', border: '2.5px solid var(--ink)' }}
       >
-        <p className="font-nunito text-xs tracking-widest uppercase opacity-60 mb-1">{week}</p>
-        <div className="flex items-baseline gap-2 mb-1">
-          <span className="font-nunito font-800 text-4xl" style={{ color: 'var(--sky)' }}>
+        <p
+          className="font-nunito text-[10px] uppercase tracking-widest mb-2"
+          style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 900 }}
+        >
+          {week}
+        </p>
+        <div className="flex items-baseline gap-2 mb-3">
+          <span
+            className="font-nunito leading-none"
+            style={{ color: 'var(--orange)', fontWeight: 900, fontSize: 44 }}
+          >
             {loading ? '…' : totalDone}
           </span>
-          <span className="font-nunito text-base opacity-70">/ {weeklyTarget} targets</span>
+          <span className="font-nunito text-sm" style={{ color: 'white', fontWeight: 800, opacity: 0.7 }}>
+            / {weeklyTarget} targets
+          </span>
         </div>
-        <div className="mt-3">
-          <WeekChart days={dayBars} />
-        </div>
+        <WeekChart days={dayBars} />
       </div>
 
       {/* Per-initiative rows */}
-      <p className="font-nunito text-xs font-bold tracking-widest uppercase mb-3"
-        style={{ color: 'var(--ink-soft)' }}>
+      <p
+        className="font-nunito text-[10px] uppercase tracking-widest mb-3"
+        style={{ color: 'var(--ink-faint)', fontWeight: 900 }}
+      >
         Initiative breakdown
       </p>
 
@@ -84,33 +94,34 @@ export default function WeekPage() {
           const extra = Math.max(0, done - ini.target)
           const capped = Math.min(done, ini.target)
           const behind = todayIdx >= 0 && capped < Math.ceil(ini.target * ((todayIdx + 1) / 7))
+          const metColor = capped >= ini.target ? 'var(--done)' : behind ? 'var(--orange-deep)' : 'var(--blue-deep)'
 
           return (
             <div
               key={ini.id}
               className="rounded-2xl px-4 py-3.5"
-              style={{ background: 'var(--cream)', border: '1px solid var(--mist)' }}
+              style={{ background: 'var(--card)', border: '2.5px solid var(--line)' }}
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">{ini.emoji}</span>
-                  <span className="font-nunito font-800 text-sm" style={{ color: 'var(--ink)' }}>
+                  <span className="font-nunito text-sm" style={{ color: 'var(--ink)', fontWeight: 900 }}>
                     {ini.name}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span
-                    className="font-nunito font-800 text-sm"
-                    style={{ color: capped >= ini.target ? '#2A7A52' : behind ? '#C05840' : 'var(--sky-deep)' }}
+                    className="font-nunito tabular-nums"
+                    style={{ color: metColor, fontWeight: 900, fontSize: 16 }}
                   >
                     {capped}/{ini.target}
                   </span>
                   {extra > 0 && (
                     <span
-                      className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                      style={{ background: 'var(--butter)', color: '#A08040' }}
+                      className="text-[10px] px-2 py-0.5 rounded"
+                      style={{ background: 'var(--orange)', color: 'white', fontWeight: 900 }}
                     >
-                      +{extra} bonus
+                      +{extra}
                     </span>
                   )}
                 </div>
@@ -126,8 +137,8 @@ export default function WeekPage() {
                       className="flex-1 rounded-full"
                       style={{
                         height: 6,
-                        background: hit ? '#5AC48A' : d === today ? 'var(--sky)' : 'var(--mist)',
-                        border: d === today ? '1.5px solid var(--sky-deep)' : 'none',
+                        background: hit ? 'var(--done)' : d === today ? 'var(--blue)' : 'var(--rule)',
+                        border: d === today && !hit ? '1.5px solid var(--blue-deep)' : 'none',
                       }}
                     />
                   )
@@ -137,13 +148,13 @@ export default function WeekPage() {
               {/* Progress bar */}
               <div
                 className="rounded-full overflow-hidden"
-                style={{ height: 4, background: 'var(--mist)' }}
+                style={{ height: 4, background: 'var(--rule)' }}
               >
                 <div
                   className="h-full rounded-full transition-all duration-500"
                   style={{
                     width: `${Math.min(100, (capped / ini.target) * 100)}%`,
-                    background: capped >= ini.target ? '#5AC48A' : behind ? 'var(--peach)' : 'var(--sky-deep)',
+                    background: capped >= ini.target ? 'var(--done)' : behind ? 'var(--orange)' : 'var(--blue)',
                   }}
                 />
               </div>
@@ -152,31 +163,29 @@ export default function WeekPage() {
         })}
       </div>
 
-      {/* Sunday review card */}
+      {/* Sunday review */}
       {isSunday && (
         <div
           className="rounded-2xl px-5 py-5 mb-6"
-          style={{
-            background: 'var(--lilac)',
-            border: '2px solid var(--lilac-deep)',
-          }}
+          style={{ background: 'var(--orange-soft)', border: '2.5px solid var(--orange)' }}
         >
-          <p className="font-nunito font-800 text-sm mb-4" style={{ color: 'var(--ink)' }}>
+          <p className="font-nunito text-sm mb-4" style={{ color: 'var(--ink)', fontWeight: 900 }}>
             Sunday Review 🪞
           </p>
           <div className="space-y-3">
             {SUNDAY_PROMPTS.map((q, i) => (
               <div key={i}>
-                <p className="font-nunito text-xs mb-1.5" style={{ color: 'var(--ink-soft)' }}>
+                <p className="font-nunito text-xs mb-1.5" style={{ color: 'var(--ink-soft)', fontWeight: 700 }}>
                   {i + 1}. {q}
                 </p>
                 <textarea
                   rows={2}
-                  className="w-full rounded-xl px-3 py-2 text-sm font-nunito resize-none outline-none"
+                  className="w-full rounded-xl px-3 py-2 text-sm resize-none outline-none"
                   style={{
                     background: 'white',
-                    border: '1px solid var(--mist)',
+                    border: '2px solid var(--line)',
                     color: 'var(--ink)',
+                    fontWeight: 700,
                   }}
                   placeholder="Reflect…"
                 />

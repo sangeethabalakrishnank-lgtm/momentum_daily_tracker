@@ -9,19 +9,31 @@ export default function CountdownBanner() {
 
   return (
     <div
-      className="rounded-2xl px-5 py-4 mb-4"
-      style={{ background: 'var(--ink)', color: 'white' }}
+      className="rounded-2xl px-5 py-5 mb-4"
+      style={{
+        background: 'var(--ink)',
+        color: 'white',
+        border: '2.5px solid var(--ink)',
+      }}
     >
-      <div className="flex items-baseline gap-2">
-        <span className="font-nunito text-5xl font-extrabold tracking-tight leading-none"
-          style={{ color: 'var(--sky)' }}>
+      <div className="flex items-baseline gap-3">
+        <span
+          className="font-nunito leading-none tracking-tight"
+          style={{ color: 'var(--orange)', fontWeight: 900, fontSize: 56 }}
+        >
           {months}
         </span>
-        <span className="font-nunito text-sm font-700 opacity-80 leading-tight">
+        <span
+          className="font-nunito text-sm leading-tight"
+          style={{ color: 'white', fontWeight: 800, letterSpacing: 0.2 }}
+        >
           months of focused runway
         </span>
       </div>
-      <p className="font-nunito text-xs mt-1.5 opacity-60 tracking-wide">
+      <p
+        className="font-nunito text-xs mt-2 uppercase"
+        style={{ color: 'var(--orange-soft)', fontWeight: 800, letterSpacing: 1.5, opacity: 0.85 }}
+      >
         → ₹70 LPA · Senior PM · AI-forward SaaS
       </p>
     </div>

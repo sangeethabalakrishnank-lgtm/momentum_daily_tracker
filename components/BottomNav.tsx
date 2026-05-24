@@ -15,8 +15,11 @@ export default function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 max-w-md mx-auto">
       <div
-        className="flex items-center justify-around px-4 py-3 border-t"
-        style={{ background: 'var(--cream)', borderColor: 'var(--mist)' }}
+        className="flex items-center justify-around px-4 py-3"
+        style={{
+          background: 'var(--ink)',
+          borderTop: '2.5px solid var(--ink)',
+        }}
       >
         {TABS.map(tab => {
           const active = path === tab.href
@@ -29,15 +32,20 @@ export default function BottomNav() {
               <span
                 className="text-lg leading-none transition-transform duration-150"
                 style={{
-                  color: active ? 'var(--sky-deep)' : 'var(--ink-soft)',
-                  transform: active ? 'scale(1.2)' : 'scale(1)',
+                  color: active ? 'var(--orange)' : 'white',
+                  opacity: active ? 1 : 0.5,
+                  transform: active ? 'scale(1.25)' : 'scale(1)',
                 }}
               >
                 {tab.icon}
               </span>
               <span
-                className="text-xs font-bold tracking-wide"
-                style={{ color: active ? 'var(--sky-deep)' : 'var(--ink-soft)' }}
+                className="text-[11px] tracking-wider uppercase"
+                style={{
+                  color: active ? 'var(--orange)' : 'white',
+                  opacity: active ? 1 : 0.5,
+                  fontWeight: 900,
+                }}
               >
                 {tab.label}
               </span>

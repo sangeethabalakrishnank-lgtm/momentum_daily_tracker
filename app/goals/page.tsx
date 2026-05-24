@@ -14,18 +14,22 @@ export default function GoalsPage() {
       {/* Hero */}
       <div
         className="rounded-2xl px-5 py-5"
-        style={{ background: 'var(--ink)', color: 'white' }}
+        style={{ background: 'var(--ink)', color: 'white', border: '2.5px solid var(--ink)' }}
       >
-        <p className="font-nunito text-xs tracking-widest uppercase opacity-50 mb-2">
+        <p className="font-nunito text-[10px] uppercase tracking-widest mb-2"
+          style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 900 }}>
           12-month target
         </p>
-        <p className="font-nunito font-800 text-2xl leading-tight mb-1" style={{ color: 'var(--sky)' }}>
+        <p className="font-nunito leading-tight mb-1"
+          style={{ color: 'var(--orange)', fontWeight: 900, fontSize: 32 }}>
           ₹70 LPA
         </p>
-        <p className="font-nunito font-700 text-base opacity-90">Senior PM · AI-forward B2B SaaS</p>
+        <p className="font-nunito text-base" style={{ color: 'white', fontWeight: 800 }}>
+          Senior PM · AI-forward B2B SaaS
+        </p>
         <div
-          className="mt-3 rounded-xl px-3 py-2 text-xs font-nunito"
-          style={{ background: 'rgba(255,255,255,0.08)', color: 'var(--lilac)' }}
+          className="mt-3 rounded-xl px-3 py-2 text-xs"
+          style={{ background: 'rgba(255,106,31,0.15)', color: 'var(--orange-soft)', fontWeight: 700 }}
         >
           🗓 Runway closes ~May 2027 · Baby planning in ~12 months · Hard deadline.
         </div>
@@ -34,10 +38,10 @@ export default function GoalsPage() {
       {/* 2-year plan */}
       <div
         className="rounded-2xl px-5 py-4"
-        style={{ background: 'var(--cream)', border: '1px solid var(--mist)' }}
+        style={{ background: 'var(--card)', border: '2.5px solid var(--line)' }}
       >
-        <p className="font-nunito text-xs font-bold tracking-widest uppercase mb-3"
-          style={{ color: 'var(--ink-soft)' }}>
+        <p className="font-nunito text-[10px] uppercase tracking-widest mb-3"
+          style={{ color: 'var(--ink-faint)', fontWeight: 900 }}>
           2-year plan
         </p>
         {[
@@ -46,8 +50,8 @@ export default function GoalsPage() {
           'Establish strength + energy baseline to sustain the grind',
         ].map((b, i) => (
           <div key={i} className="flex gap-2.5 mb-2 last:mb-0">
-            <span style={{ color: 'var(--sky-deep)' }} className="font-bold mt-0.5">·</span>
-            <p className="font-nunito text-sm" style={{ color: 'var(--ink)' }}>{b}</p>
+            <span style={{ color: 'var(--orange)', fontWeight: 900 }} className="mt-0.5">▸</span>
+            <p className="font-nunito text-sm" style={{ color: 'var(--ink)', fontWeight: 700 }}>{b}</p>
           </div>
         ))}
       </div>
@@ -55,10 +59,10 @@ export default function GoalsPage() {
       {/* 7-year plan */}
       <div
         className="rounded-2xl px-5 py-4"
-        style={{ background: 'var(--lilac)', border: '2px solid var(--lilac-deep)' }}
+        style={{ background: 'var(--blue-soft)', border: '2.5px solid var(--blue)' }}
       >
-        <p className="font-nunito text-xs font-bold tracking-widest uppercase mb-3"
-          style={{ color: 'var(--lilac-deep)' }}>
+        <p className="font-nunito text-[10px] uppercase tracking-widest mb-3"
+          style={{ color: 'var(--blue-deep)', fontWeight: 900 }}>
           7-year vision
         </p>
         {[
@@ -67,16 +71,16 @@ export default function GoalsPage() {
           'Optional side income — consulting, content, or product bets',
         ].map((b, i) => (
           <div key={i} className="flex gap-2.5 mb-2 last:mb-0">
-            <span style={{ color: 'var(--lilac-deep)' }} className="font-bold mt-0.5">·</span>
-            <p className="font-nunito text-sm" style={{ color: 'var(--ink)' }}>{b}</p>
+            <span style={{ color: 'var(--blue)', fontWeight: 900 }} className="mt-0.5">▸</span>
+            <p className="font-nunito text-sm" style={{ color: 'var(--ink)', fontWeight: 700 }}>{b}</p>
           </div>
         ))}
       </div>
 
       {/* Initiative → Goal map */}
       <div>
-        <p className="font-nunito text-xs font-bold tracking-widest uppercase mb-3"
-          style={{ color: 'var(--ink-soft)' }}>
+        <p className="font-nunito text-[10px] uppercase tracking-widest mb-3"
+          style={{ color: 'var(--ink-faint)', fontWeight: 900 }}>
           How each habit connects
         </p>
         <div className="space-y-2.5">
@@ -84,14 +88,14 @@ export default function GoalsPage() {
             <div
               key={ini.id}
               className="rounded-2xl px-4 py-3.5"
-              style={{ background: 'var(--cream)', border: '1px solid var(--mist)' }}
+              style={{ background: 'var(--card)', border: '2.5px solid var(--line)' }}
             >
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="text-lg">{ini.emoji}</span>
-                <span className="font-nunito font-800 text-sm" style={{ color: 'var(--ink)' }}>
+                <span className="font-nunito text-sm" style={{ color: 'var(--ink)', fontWeight: 900 }}>
                   {ini.name}
                 </span>
-                <span className="font-nunito text-xs" style={{ color: 'var(--ink-soft)' }}>
+                <span className="font-nunito text-xs" style={{ color: 'var(--ink-faint)', fontWeight: 700 }}>
                   {ini.target}×/wk
                 </span>
               </div>
@@ -99,8 +103,8 @@ export default function GoalsPage() {
                 {(GOAL_MAP[ini.id] ?? []).map(g => (
                   <span
                     key={g}
-                    className="text-[11px] font-nunito font-bold px-2.5 py-1 rounded-full"
-                    style={{ background: 'var(--sky)', color: 'var(--ink)' }}
+                    className="text-[11px] px-2.5 py-1 rounded"
+                    style={{ background: 'var(--orange)', color: 'white', fontWeight: 900 }}
                   >
                     {g}
                   </span>

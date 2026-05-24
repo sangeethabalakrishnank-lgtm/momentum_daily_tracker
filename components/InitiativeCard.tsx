@@ -1,142 +1,112 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { useState } from 'react'
-import Confetti from './Confetti'
+import { motion } from 'framer-motion'
 import type { Initiative } from '@/lib/initiatives'
-
-export type CardState = {
-  taps: number      // how many times tapped total
-  done: boolean     // reached target
-  bonus: number     // taps beyond target
-}
 
 type Props = {
   initiative: Initiative
+  done: boolean
+  weeklyDone: number      // how many days completed this week
   streak: number
-  state: CardState
-  onChange: (s: CardState) => void
+  saving: boolean
+  onToggle: () => void
 }
 
-export default function InitiativeCard({ initiative, streak, state, onChange }: Props) {
-  const { emoji, name, sub, target, tier } = initiative
-  const { taps, done, bonus } = state
-  const remaining = Math.max(0, target - taps)
-
-  const [confettiBurst, setConfettiBurst] = useState(false)
-  const [miniBurst, setMiniBurst] = useState(false)
-  const [bounce, setBounce] = useState(false)
-
-  function handleTap() {
-    if (!done) {
-      const newTaps = taps + 1
-      const nowDone = newTaps >= target
-      if (nowDone) {
-        setConfettiBurst(true)
-        setTimeout(() => setConfettiBurst(false), 50)
-      } else {
-        setBounce(true)
-        setTimeout(() => setBounce(false), 50)
-      }
-      onChange({ taps: newTaps, done: nowDone, bonus })
-    } else {
-      // bonus tap
-      setMiniBurst(true)
-      setTimeout(() => setMiniBurst(false), 50)
-      onChange({ taps, done, bonus: bonus + 1 })
-    }
-  }
+export default function InitiativeCard({ initiative, done, weeklyDone, streak, saving, onToggle }: Props) {
+  const { emoji, name, sub, target } = initiative
+  const weeklyMet = weeklyDone >= target
 
   return (
-    <motion.div
+    <motion.button
       layout
       layoutId={initiative.id}
-      transition={{ layout: { type: 'spring', stiffness: 300, damping: 30 } }}
-      className="relative rounded-2xl px-4 py-3.5 mb-3 cursor-pointer select-none active:scale-[0.98]"
+      transition={{ layout: { type: 'spring', stiffness: 320, damping: 32 } }}
+      onClick={onToggle}
+      disabled={saving}
+      whileTap={{ scale: 0.98 }}
+      className="relative w-full text-left rounded-2xl px-4 py-4 mb-3 select-none"
       style={{
-        background: done ? 'var(--mint)' : 'var(--cream)',
-        border: `2px solid ${
-          done ? '#A0D4B8' :
-          tier === 1 ? 'var(--lilac-deep)' : 'var(--mist)'
-        }`,
-        opacity: done ? 0.85 : 1,
-        transition: 'background 0.4s, border-color 0.3s, opacity 0.3s',
+        background: done ? 'var(--done-bg)' : 'var(--card)',
+        border: `2.5px solid ${done ? 'var(--done)' : 'var(--line)'}`,
+        opacity: saving ? 0.7 : 1,
+        transition: 'background 0.2s, border-color 0.2s, opacity 0.15s',
       }}
-      onClick={handleTap}
     >
-      <Confetti trigger={confettiBurst} />
-      <Confetti trigger={miniBurst} mini />
-
       <div className="flex items-center gap-3">
-        <span className="text-2xl leading-none">{emoji}</span>
+        {/* Big checkbox */}
+        <div
+          className="flex items-center justify-center rounded-lg flex-shrink-0"
+          style={{
+            width: 32, height: 32,
+            background: done ? 'var(--done)' : 'transparent',
+            border: `2.5px solid ${done ? 'var(--done)' : 'var(--ink)'}`,
+            transition: 'all 0.15s',
+          }}
+        >
+          {done && (
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 18 }}
+              style={{ color: 'white', fontWeight: 900, fontSize: 18, lineHeight: 1 }}
+            >
+              ✓
+            </motion.span>
+          )}
+        </div>
 
+        {/* Emoji */}
+        <span className="text-2xl leading-none flex-shrink-0">{emoji}</span>
+
+        {/* Title + sub */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <span className="font-nunito font-800 text-sm" style={{ color: 'var(--ink)' }}>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span
+              className="font-nunito text-base"
+              style={{
+                color: 'var(--ink)',
+                fontWeight: 900,
+                textDecoration: done ? 'line-through' : 'none',
+                textDecorationColor: 'var(--done)',
+                textDecorationThickness: 2,
+              }}
+            >
               {name}
             </span>
-            {tier === 1 && (
-              <span
-                className="text-[9px] font-bold tracking-widest uppercase px-1.5 py-0.5 rounded-full"
-                style={{ background: 'var(--lilac)', color: 'var(--lilac-deep)' }}
-              >
-                must-hit
-              </span>
-            )}
             {streak > 1 && (
               <span
-                className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
-                style={{ background: 'var(--butter)', color: '#A08040' }}
+                className="text-[10px] font-black px-2 py-0.5 rounded"
+                style={{ background: 'var(--orange)', color: 'white', letterSpacing: 0.3 }}
               >
-                🔥 {streak}d
+                🔥 {streak}
               </span>
             )}
           </div>
-          <p className="font-nunito text-xs leading-tight" style={{ color: 'var(--ink-soft)' }}>
+          <p className="font-nunito text-xs mt-0.5" style={{ color: 'var(--ink-soft)', fontWeight: 600 }}>
             {sub}
           </p>
         </div>
 
-        <div className="flex flex-col items-end gap-1">
-          {!done ? (
-            <motion.span
-              key={remaining}
-              animate={bounce ? { y: [-4, 0], scale: [1.2, 1] } : {}}
-              transition={{ duration: 0.25 }}
-              className="font-nunito font-800 text-sm tabular-nums"
-              style={{ color: 'var(--sky-deep)' }}
-            >
-              {remaining}× left
-            </motion.span>
-          ) : (
-            <span className="font-nunito font-800 text-sm" style={{ color: '#2A7A52' }}>
-              ✓ done
-            </span>
-          )}
-          {bonus > 0 && (
-            <span
-              className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-              style={{ background: 'var(--butter)', color: '#A08040' }}
-            >
-              +{bonus} bonus
-            </span>
-          )}
+        {/* Weekly count */}
+        <div className="flex flex-col items-end flex-shrink-0">
+          <span
+            className="font-nunito tabular-nums leading-none"
+            style={{
+              color: weeklyMet ? 'var(--done)' : 'var(--blue-deep)',
+              fontWeight: 900,
+              fontSize: 20,
+            }}
+          >
+            {weeklyDone}<span style={{ color: 'var(--ink-faint)', fontSize: 14 }}>/{target}</span>
+          </span>
+          <span
+            className="text-[9px] font-black tracking-widest uppercase mt-0.5"
+            style={{ color: 'var(--ink-faint)' }}
+          >
+            this week
+          </span>
         </div>
       </div>
-
-      {/* Progress bar */}
-      <div
-        className="mt-2.5 rounded-full overflow-hidden"
-        style={{ height: 3, background: 'var(--mist)' }}
-      >
-        <motion.div
-          className="h-full rounded-full"
-          style={{ background: done ? '#5AC48A' : 'var(--sky-deep)' }}
-          initial={{ width: 0 }}
-          animate={{ width: `${Math.min(100, ((taps) / target) * 100)}%` }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-        />
-      </div>
-    </motion.div>
+    </motion.button>
   )
 }
