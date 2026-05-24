@@ -1,30 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@1,600;1,700&family=Nunito:wght@400;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,800;1,300&family=Nunito:wght@400;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Bold three-color system: orange, blue, black */
-  --orange: #FF6A1F;          /* primary action, accents, fire */
-  --orange-deep: #D14E0A;     /* hover, pressed */
-  --orange-soft: #FFE8DC;     /* tag bg, subtle highlight */
-
-  --blue: #1E40AF;            /* secondary, progress, links */
-  --blue-deep: #0F2A6B;       /* emphasis, dark */
-  --blue-soft: #DBE5FF;       /* tag bg */
-
-  --ink: #0A0A0A;             /* primary text, all heavy weights */
-  --ink-soft: #4A4A4A;        /* secondary text */
-  --ink-faint: #8A8A8A;       /* tertiary, hints */
-
-  --bg: #FAFAF7;              /* page bg, slightly off-white */
-  --card: #FFFFFF;            /* cards */
-  --line: #1A1A1A;            /* heavy borders (this is the BOLD bit) */
-  --rule: #E8E8E5;            /* subtle dividers */
-
-  --done: #14532D;            /* completed text */
-  --done-bg: #DCFCE7;         /* completed bg subtle */
+  --sage: #7C9A7E;
+  --sage-light: #A8C5AA;
+  --sage-dark: #4E6B50;
+  --cream: #F7F3EE;
+  --warm-white: #FDFAF7;
+  --charcoal: #2C2C2C;
+  --mid-grey: #8A8A8A;
+  --light-grey: #E8E3DC;
+  --accent-gold: #C9A84C;
+  --accent-rose: #C97B84;
+  --bg: #F2EDE6;
+  --sage-tint: #EEF4EE;
+  --gold-tint: #FFF8E8;
 }
 
 * {
@@ -32,17 +25,14 @@
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--ink);
   font-family: 'Nunito', sans-serif;
-  font-weight: 700;
+  background: var(--bg);
+  color: var(--charcoal);
   min-height: 100dvh;
 }
 
 .font-fraunces {
   font-family: 'Fraunces', serif;
-  font-style: italic;
-  font-weight: 700;
 }
 
 html {

@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import BottomNav from '@/components/BottomNav'
+import HeaderNav from '@/components/HeaderNav'
 
 export const metadata: Metadata = {
   title: 'Momentum',
-  description: '12 months of focused runway · ₹70 LPA · Senior PM',
+  description: 'Tap to log. That\'s the whole thing.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0A0A0A',
+  themeColor: '#2C2C2C',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -26,9 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className="max-w-md mx-auto pb-24">
-        <main className="min-h-dvh">{children}</main>
-        <BottomNav />
+      <body className="max-w-[480px] mx-auto pb-8">
+        <HeaderNav />
+        <main className="min-h-[calc(100dvh-140px)]">{children}</main>
       </body>
     </html>
   )

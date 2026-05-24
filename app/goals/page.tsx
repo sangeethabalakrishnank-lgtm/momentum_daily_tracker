@@ -1,121 +1,156 @@
 import { INITIATIVES } from '@/lib/initiatives'
 
-const GOAL_MAP: Record<string, string[]> = {
-  gym:      ['strength + energy baseline', 'stamina for the grind'],
-  linkedin: ['land Senior PM role', 'build AI/automation moat', 'recruiter visibility'],
-  apply:    ['land Senior PM role', '₹70 LPA target comp'],
-  automate: ['build AI/automation moat', 'recognised AI-PM voice'],
-  blog:     ['recognised AI-PM voice', 'optional side income foundation'],
+// Map existing initiative IDs to the pivoted goal direction
+const GOAL_MAP: Record<string, { goal: string; horizon: '2-yr' | '5-yr' }> = {
+  gym:      { goal: 'Energy + discipline baseline',          horizon: '2-yr' },
+  linkedin: { goal: 'Personal brand → strategy pivot',       horizon: '2-yr' },
+  apply:    { goal: 'Qualification for strategy/org design', horizon: '5-yr' },
+  automate: { goal: 'Skill + future revenue',                horizon: '5-yr' },
+  blog:     { goal: 'Thought leadership · long-form proof',  horizon: '2-yr' },
 }
 
+const VISION_2YR = [
+  { title: 'Visible personal brand in HR tech & org design', sub: 'LinkedIn presence + blog → recognised voice' },
+  { title: 'Ship a working side product',                    sub: 'To-do app live, used by real people' },
+  { title: 'Strength + energy baseline',                     sub: 'Gym ≥ 4×/week as a non-negotiable' },
+]
+
+const VISION_5YR = [
+  { title: 'Pivot into strategy / org design',  sub: 'Leverage Workday background → consulting or senior strategy role' },
+  { title: 'Independent revenue stream',         sub: 'Products + automations earning on the side' },
+  { title: 'Be known, not just competent',       sub: 'Online and offline reputation in your niche' },
+]
+
 export default function GoalsPage() {
+  const sorted = [...INITIATIVES].sort((a, b) => (a.tier === 1 ? 0 : 1) - (b.tier === 1 ? 0 : 1))
+
   return (
-    <div className="px-4 pt-5 space-y-4">
-      {/* Hero */}
-      <div
-        className="rounded-2xl px-5 py-5"
-        style={{ background: 'var(--ink)', color: 'white', border: '2.5px solid var(--ink)' }}
+    <div className="px-4 pt-5">
+      <p
+        className="font-fraunces uppercase mb-3"
+        style={{ fontSize: 12, fontWeight: 600, color: 'var(--mid-grey)', letterSpacing: '0.12em' }}
       >
-        <p className="font-nunito text-[10px] uppercase tracking-widest mb-2"
-          style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 900 }}>
-          12-month target
-        </p>
-        <p className="font-nunito leading-tight mb-1"
-          style={{ color: 'var(--orange)', fontWeight: 900, fontSize: 32 }}>
-          ₹70 LPA
-        </p>
-        <p className="font-nunito text-base" style={{ color: 'white', fontWeight: 800 }}>
-          Senior PM · AI-forward B2B SaaS
-        </p>
-        <div
-          className="mt-3 rounded-xl px-3 py-2 text-xs"
-          style={{ background: 'rgba(255,106,31,0.15)', color: 'var(--orange-soft)', fontWeight: 700 }}
+        Why you're doing this
+      </p>
+
+      {/* 2-Year Vision */}
+      <div
+        style={{
+          background: 'var(--warm-white)',
+          borderRadius: 14,
+          padding: 16,
+          marginBottom: 12,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+        }}
+      >
+        <p
+          className="font-fraunces italic uppercase mb-3"
+          style={{ fontSize: 11, fontWeight: 600, color: 'var(--sage-dark)', letterSpacing: '0.12em' }}
         >
-          🗓 Runway closes ~May 2027 · Baby planning in ~12 months · Hard deadline.
-        </div>
-      </div>
-
-      {/* 2-year plan */}
-      <div
-        className="rounded-2xl px-5 py-4"
-        style={{ background: 'var(--card)', border: '2.5px solid var(--line)' }}
-      >
-        <p className="font-nunito text-[10px] uppercase tracking-widest mb-3"
-          style={{ color: 'var(--ink-faint)', fontWeight: 900 }}>
-          2-year plan
+          🎯 2-Year Vision
         </p>
-        {[
-          'Land Senior PM role at an AI-forward B2B SaaS company',
-          'Build an AI/automation moat that compounds over time',
-          'Establish strength + energy baseline to sustain the grind',
-        ].map((b, i) => (
-          <div key={i} className="flex gap-2.5 mb-2 last:mb-0">
-            <span style={{ color: 'var(--orange)', fontWeight: 900 }} className="mt-0.5">▸</span>
-            <p className="font-nunito text-sm" style={{ color: 'var(--ink)', fontWeight: 700 }}>{b}</p>
+        {VISION_2YR.map((v, i) => (
+          <div key={i} className="flex items-start gap-2.5 mb-2.5 last:mb-0">
+            <div
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: 'var(--sage)',
+                marginTop: 5,
+                flexShrink: 0,
+              }}
+            />
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700 }}>{v.title}</div>
+              <div style={{ fontSize: 11, color: 'var(--mid-grey)', marginTop: 2, lineHeight: 1.4 }}>{v.sub}</div>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* 7-year plan */}
+      {/* 5-Year Vision */}
       <div
-        className="rounded-2xl px-5 py-4"
-        style={{ background: 'var(--blue-soft)', border: '2.5px solid var(--blue)' }}
+        style={{
+          background: 'var(--warm-white)',
+          borderRadius: 14,
+          padding: 16,
+          marginBottom: 12,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+        }}
       >
-        <p className="font-nunito text-[10px] uppercase tracking-widest mb-3"
-          style={{ color: 'var(--blue-deep)', fontWeight: 900 }}>
-          7-year vision
+        <p
+          className="font-fraunces italic uppercase mb-3"
+          style={{ fontSize: 11, fontWeight: 600, color: 'var(--sage-dark)', letterSpacing: '0.12em' }}
+        >
+          🌟 5-Year Vision
         </p>
-        {[
-          'Product Head role — leading PMs, shaping org strategy',
-          'Recognised AI-PM voice — writing, speaking, building in public',
-          'Optional side income — consulting, content, or product bets',
-        ].map((b, i) => (
-          <div key={i} className="flex gap-2.5 mb-2 last:mb-0">
-            <span style={{ color: 'var(--blue)', fontWeight: 900 }} className="mt-0.5">▸</span>
-            <p className="font-nunito text-sm" style={{ color: 'var(--ink)', fontWeight: 700 }}>{b}</p>
+        {VISION_5YR.map((v, i) => (
+          <div key={i} className="flex items-start gap-2.5 mb-2.5 last:mb-0">
+            <div
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: 'var(--accent-gold)',
+                marginTop: 5,
+                flexShrink: 0,
+              }}
+            />
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700 }}>{v.title}</div>
+              <div style={{ fontSize: 11, color: 'var(--mid-grey)', marginTop: 2, lineHeight: 1.4 }}>{v.sub}</div>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Initiative → Goal map */}
-      <div>
-        <p className="font-nunito text-[10px] uppercase tracking-widest mb-3"
-          style={{ color: 'var(--ink-faint)', fontWeight: 900 }}>
-          How each habit connects
-        </p>
-        <div className="space-y-2.5">
-          {INITIATIVES.map(ini => (
+      <p
+        className="font-fraunces uppercase mt-5 mb-3"
+        style={{ fontSize: 12, fontWeight: 600, color: 'var(--mid-grey)', letterSpacing: '0.12em' }}
+      >
+        Initiative → Goal map (priority order)
+      </p>
+
+      <div className="space-y-2">
+        {sorted.map(ini => {
+          const m = GOAL_MAP[ini.id]
+          const priority = ini.tier === 1
+          return (
             <div
               key={ini.id}
-              className="rounded-2xl px-4 py-3.5"
-              style={{ background: 'var(--card)', border: '2.5px solid var(--line)' }}
+              style={{
+                background: 'var(--warm-white)',
+                borderRadius: 12,
+                padding: '12px 14px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+              }}
             >
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-lg">{ini.emoji}</span>
-                <span className="font-nunito text-sm" style={{ color: 'var(--ink)', fontWeight: 900 }}>
-                  {ini.name}
-                </span>
-                <span className="font-nunito text-xs" style={{ color: 'var(--ink-faint)', fontWeight: 700 }}>
-                  {ini.target}×/wk
+              <div className="flex items-center gap-2 mb-1">
+                <span style={{ fontSize: 18 }}>{ini.emoji}</span>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>{ini.name}</span>
+                <span
+                  className="ml-auto uppercase"
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 800,
+                    color: priority ? 'var(--accent-gold)' : 'var(--sage-dark)',
+                    background: priority ? 'var(--gold-tint)' : 'var(--sage-tint)',
+                    borderRadius: 20,
+                    padding: '3px 8px',
+                    letterSpacing: '0.06em',
+                  }}
+                >
+                  {priority ? `MUST · ${m?.horizon ?? ''}` : m?.horizon ?? ''}
                 </span>
               </div>
-              <div className="flex flex-wrap gap-1.5">
-                {(GOAL_MAP[ini.id] ?? []).map(g => (
-                  <span
-                    key={g}
-                    className="text-[11px] px-2.5 py-1 rounded"
-                    style={{ background: 'var(--orange)', color: 'white', fontWeight: 900 }}
-                  >
-                    {g}
-                  </span>
-                ))}
+              <div style={{ fontSize: 11, color: 'var(--mid-grey)' }}>
+                {m?.goal ?? ini.sub}
               </div>
             </div>
-          ))}
-        </div>
+          )
+        })}
       </div>
-
-      <div className="h-4" />
     </div>
   )
 }

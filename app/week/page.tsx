@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import WeekChart from '@/components/WeekChart'
 import { INITIATIVES } from '@/lib/initiatives'
 import { currentWeek, weekDays, todayISO } from '@/lib/date'
 
@@ -9,23 +8,16 @@ type WeekRecord = {
   date: string
   initiative: string
   completed: boolean
-  count: number
 }
 
-const DAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-
-const SUNDAY_PROMPTS = [
-  'Which Tier 1 initiative slipped this week, and why?',
-  "What's the ONE thing that'll move the ₹70 LPA needle next week?",
-  'Anything to remove from the list?',
-]
+const DAY_LETTERS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
 
 export default function WeekPage() {
   const week = currentWeek()
   const days = weekDays(week)
   const today = todayISO()
   const todayIdx = days.indexOf(today)
-  const isSunday = new Date().getDay() === 0
+  const effectiveTodayIdx = todayIdx === -1 ? 6 : todayIdx
 
   const [records, setRecords] = useState<WeekRecord[]>([])
   const [loading, setLoading] = useState(true)
@@ -37,19 +29,26 @@ export default function WeekPage() {
       .catch(() => setLoading(false))
   }, [week])
 
-  const weeklyTarget = INITIATIVES.reduce((s, i) => s + i.target, 0)
+  const weeklyMax = INITIATIVES.reduce((s, i) => s + i.target, 0)
   const totalDone = INITIATIVES.reduce((s, ini) => {
-    const rec = records.filter(r => r.initiative === ini.id && r.completed)
-    return s + Math.min(rec.length, ini.target)
+    const done = records.filter(r => r.initiative === ini.id && r.completed).length
+    return s + done
   }, 0)
 
+  // Week label
+  const monday = new Date(days[0] + 'T00:00:00')
+  const sunday = new Date(days[6] + 'T00:00:00')
+  const fmt = (x: Date) => x.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' })
+  const weekLabel = `Week of ${fmt(monday)} – ${fmt(sunday)}`
+
+  // Day bars
   const dayBars = days.map((d, i) => {
-    const dayRecs = records.filter(r => r.date === d && r.completed)
-    const maxForDay = INITIATIVES.length
+    const cnt = records.filter(r => r.date === d && r.completed).length
     return {
-      label: DAY_LABELS[i],
-      pct: maxForDay ? (dayRecs.length / maxForDay) * 100 : 0,
+      cnt,
+      pct: (cnt / INITIATIVES.length) * 100,
       isToday: d === today,
+      isPast: i < effectiveTodayIdx,
     }
   })
 
@@ -57,143 +56,181 @@ export default function WeekPage() {
     <div className="px-4 pt-5">
       {/* Hero */}
       <div
-        className="rounded-2xl px-5 py-5 mb-5"
-        style={{ background: 'var(--ink)', color: 'white', border: '2.5px solid var(--ink)' }}
+        style={{
+          background: 'var(--charcoal)',
+          borderRadius: 18,
+          padding: '22px 20px',
+          color: 'var(--cream)',
+          marginBottom: 18,
+        }}
       >
         <p
-          className="font-nunito text-[10px] uppercase tracking-widest mb-2"
-          style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 900 }}
+          className="font-fraunces italic mb-1.5"
+          style={{ fontSize: 12, fontWeight: 300, color: 'var(--sage-light)', letterSpacing: '0.04em' }}
         >
-          {week}
+          {weekLabel}
         </p>
-        <div className="flex items-baseline gap-2 mb-3">
+        <div className="flex items-end gap-2.5">
           <span
-            className="font-nunito leading-none"
-            style={{ color: 'var(--orange)', fontWeight: 900, fontSize: 44 }}
+            className="font-fraunces"
+            style={{ fontSize: 56, fontWeight: 800, lineHeight: 0.95, color: '#fff' }}
           >
             {loading ? '…' : totalDone}
           </span>
-          <span className="font-nunito text-sm" style={{ color: 'white', fontWeight: 800, opacity: 0.7 }}>
-            / {weeklyTarget} targets
+          <span style={{ fontSize: 12, color: 'var(--mid-grey)', paddingBottom: 8 }}>
+            / {weeklyMax} weekly targets
           </span>
         </div>
-        <WeekChart days={dayBars} />
+        <div className="flex gap-1.5 mt-4 items-end" style={{ height: 64 }}>
+          {dayBars.map((b, i) => (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
+              <div className="flex-1 w-full flex items-end">
+                <div
+                  className="w-full"
+                  style={{
+                    borderRadius: '4px 4px 0 0',
+                    background: b.isToday ? 'var(--sage)' : b.isPast && b.cnt > 0 ? '#5A7A5C' : '#3A3A3A',
+                    minHeight: 4,
+                    height: Math.max(b.pct * 0.55, b.cnt > 0 ? 6 : 2),
+                    transition: 'height 0.4s',
+                  }}
+                />
+              </div>
+              <span
+                className="uppercase"
+                style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.06em', color: 'var(--mid-grey)' }}
+              >
+                {DAY_LETTERS[i]}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Per-initiative rows */}
+      {/* Initiative breakdown */}
       <p
-        className="font-nunito text-[10px] uppercase tracking-widest mb-3"
-        style={{ color: 'var(--ink-faint)', fontWeight: 900 }}
+        className="font-fraunces uppercase mb-3"
+        style={{ fontSize: 12, fontWeight: 600, color: 'var(--mid-grey)', letterSpacing: '0.12em' }}
       >
-        Initiative breakdown
+        Initiative progress
       </p>
 
-      <div className="space-y-3 mb-5">
-        {INITIATIVES.map(ini => {
-          const done = records.filter(r => r.initiative === ini.id && r.completed).length
-          const extra = Math.max(0, done - ini.target)
-          const capped = Math.min(done, ini.target)
-          const behind = todayIdx >= 0 && capped < Math.ceil(ini.target * ((todayIdx + 1) / 7))
-          const metColor = capped >= ini.target ? 'var(--done)' : behind ? 'var(--orange-deep)' : 'var(--blue-deep)'
+      <div className="space-y-2.5 mb-5">
+        {[...INITIATIVES]
+          .sort((a, b) => (a.tier === 1 ? 0 : 1) - (b.tier === 1 ? 0 : 1))
+          .map(ini => {
+            const done = records.filter(r => r.initiative === ini.id && r.completed).length
+            const pct = Math.min((done / ini.target) * 100, 100)
+            const expected = ((effectiveTodayIdx + 1) / 7) * ini.target
+            const behind = done < expected * 0.7
 
-          return (
-            <div
-              key={ini.id}
-              className="rounded-2xl px-4 py-3.5"
-              style={{ background: 'var(--card)', border: '2.5px solid var(--line)' }}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{ini.emoji}</span>
-                  <span className="font-nunito text-sm" style={{ color: 'var(--ink)', fontWeight: 900 }}>
-                    {ini.name}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className="font-nunito tabular-nums"
-                    style={{ color: metColor, fontWeight: 900, fontSize: 16 }}
-                  >
-                    {capped}/{ini.target}
-                  </span>
-                  {extra > 0 && (
-                    <span
-                      className="text-[10px] px-2 py-0.5 rounded"
-                      style={{ background: 'var(--orange)', color: 'white', fontWeight: 900 }}
-                    >
-                      +{extra}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Day dots */}
-              <div className="flex gap-1.5 mb-2">
-                {days.map((d, i) => {
-                  const hit = records.some(r => r.initiative === ini.id && r.date === d && r.completed)
-                  return (
-                    <div
-                      key={i}
-                      className="flex-1 rounded-full"
-                      style={{
-                        height: 6,
-                        background: hit ? 'var(--done)' : d === today ? 'var(--blue)' : 'var(--rule)',
-                        border: d === today && !hit ? '1.5px solid var(--blue-deep)' : 'none',
-                      }}
-                    />
-                  )
-                })}
-              </div>
-
-              {/* Progress bar */}
+            return (
               <div
-                className="rounded-full overflow-hidden"
-                style={{ height: 4, background: 'var(--rule)' }}
+                key={ini.id}
+                style={{
+                  background: 'var(--warm-white)',
+                  borderRadius: 14,
+                  padding: '14px 16px',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+                }}
               >
+                <div className="flex items-center justify-between mb-2.5">
+                  <div className="flex items-center gap-2">
+                    <span style={{ fontSize: 18 }}>{ini.emoji}</span>
+                    <span style={{ fontSize: 14, fontWeight: 700 }}>{ini.name}</span>
+                  </div>
+                  <span
+                    className="font-fraunces"
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: behind ? 'var(--accent-rose)' : 'var(--charcoal)',
+                    }}
+                  >
+                    {done}/{ini.target}
+                  </span>
+                </div>
+
+                {/* Day dots row */}
+                <div className="flex gap-1.5 mb-2">
+                  {days.map((d, i) => {
+                    const isDone = records.some(r => r.initiative === ini.id && r.date === d && r.completed)
+                    const isToday = d === today
+                    let bg = 'var(--light-grey)'
+                    let color = 'var(--mid-grey)'
+                    let extra: React.CSSProperties = {}
+                    if (isDone) { bg = 'var(--sage)'; color = '#fff' }
+                    else if (isToday) {
+                      bg = 'var(--sage-tint)'
+                      color = 'var(--sage-dark)'
+                      extra = { boxShadow: 'inset 0 0 0 2px var(--sage)' }
+                    }
+                    return (
+                      <div
+                        key={i}
+                        className="flex-1 flex items-center justify-center"
+                        style={{
+                          height: 26,
+                          borderRadius: 7,
+                          fontSize: 9,
+                          fontWeight: 800,
+                          background: bg,
+                          color,
+                          ...extra,
+                        }}
+                      >
+                        {DAY_LETTERS[i]}
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Progress bar */}
                 <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: `${Math.min(100, (capped / ini.target) * 100)}%`,
-                    background: capped >= ini.target ? 'var(--done)' : behind ? 'var(--orange)' : 'var(--blue)',
-                  }}
-                />
+                  className="overflow-hidden"
+                  style={{ background: 'var(--light-grey)', borderRadius: 20, height: 6 }}
+                >
+                  <div
+                    style={{
+                      height: '100%',
+                      borderRadius: 20,
+                      width: `${pct}%`,
+                      background: behind ? 'var(--accent-rose)' : 'var(--sage)',
+                      transition: 'width 0.5s',
+                    }}
+                  />
+                </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
       </div>
 
-      {/* Sunday review */}
-      {isSunday && (
-        <div
-          className="rounded-2xl px-5 py-5 mb-6"
-          style={{ background: 'var(--orange-soft)', border: '2.5px solid var(--orange)' }}
-        >
-          <p className="font-nunito text-sm mb-4" style={{ color: 'var(--ink)', fontWeight: 900 }}>
-            Sunday Review 🪞
+      {/* Sunday review — always shown */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--sage-dark), var(--sage))',
+          borderRadius: 16,
+          padding: 18,
+          color: '#fff',
+          marginTop: 18,
+        }}
+      >
+        <p className="font-fraunces italic mb-1.5" style={{ fontSize: 18, fontWeight: 600 }}>
+          Sunday review
+        </p>
+        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', marginBottom: 12 }}>
+          10 minutes. Open this on Sundays — that's the whole ritual.
+        </p>
+        {[
+          'Which initiative slipped, and why?',
+          "What's the ONE thing you'll move next week?",
+          'Anything to remove from the list?',
+        ].map((q, i) => (
+          <p key={i} style={{ fontSize: 13, fontWeight: 700, margin: '10px 0 6px' }}>
+            → {q}
           </p>
-          <div className="space-y-3">
-            {SUNDAY_PROMPTS.map((q, i) => (
-              <div key={i}>
-                <p className="font-nunito text-xs mb-1.5" style={{ color: 'var(--ink-soft)', fontWeight: 700 }}>
-                  {i + 1}. {q}
-                </p>
-                <textarea
-                  rows={2}
-                  className="w-full rounded-xl px-3 py-2 text-sm resize-none outline-none"
-                  style={{
-                    background: 'white',
-                    border: '2px solid var(--line)',
-                    color: 'var(--ink)',
-                    fontWeight: 700,
-                  }}
-                  placeholder="Reflect…"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   )
 }
