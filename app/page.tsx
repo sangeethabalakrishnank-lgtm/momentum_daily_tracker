@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import InitiativeCard from '@/components/InitiativeCard'
 import MoodSelector, { type Mood } from '@/components/MoodSelector'
@@ -17,9 +17,10 @@ export default function TodayPage() {
   const [streaks, setStreaks] = useState<Record<string, number>>({})
   const [mood, setMood] = useState<Mood | null>(null)
   const [note, setNote] = useState('')
-  const [saving, setSaving] = useState<Record<string, boolean>>({})
+  const [dirty, setDirty] = useState(false)
+  const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
-  const moodNoteTimer = useRef<NodeJS.Timeout | null>(null)
+  const [loaded, setLoaded] = useState(false)
 
   const today = todayISO()
   const week = currentWeek()
@@ -41,6 +42,7 @@ export default function TodayPage() {
         if (n) setNote(n)
       })
       .catch(() => {})
+      .finally(() => setLoaded(true))
 
     fetch('/api/streaks')
       .then(r => r.json())
@@ -53,58 +55,48 @@ export default function TodayPage() {
     setTimeout(() => setToast(msg), 30)
   }
 
-  async function toggle(id: string) {
-    const newDone = !doneToday[id]
-    setDoneToday(prev => ({ ...prev, [id]: newDone }))
-    setSaving(prev => ({ ...prev, [id]: true }))
-    try {
-      await fetch('/api/checkin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          date: today,
-          initiative: id,
-          completed: newDone,
-          count: newDone ? 1 : 0,
-          mood: mood ?? undefined,
-          note: note || undefined,
-        }),
-      })
-      if (newDone) fireToast('Logged! Keep going 🌱')
-    } catch {
-      setDoneToday(prev => ({ ...prev, [id]: !newDone }))
-    } finally {
-      setSaving(prev => ({ ...prev, [id]: false }))
-    }
+  function toggle(id: string) {
+    setDoneToday(prev => ({ ...prev, [id]: !prev[id] }))
+    setDirty(true)
   }
 
-  function scheduleMetaSave(nextMood: Mood | null, nextNote: string) {
-    if (moodNoteTimer.current) clearTimeout(moodNoteTimer.current)
-    moodNoteTimer.current = setTimeout(async () => {
-      const completedToday = INITIATIVES.filter(i => doneToday[i.id])
-      if (completedToday.length === 0) return
-      await Promise.all(completedToday.map(ini =>
+  function handleMood(m: Mood) {
+    setMood(m)
+    setDirty(true)
+  }
+
+  function handleNote(n: string) {
+    setNote(n)
+    setDirty(true)
+  }
+
+  async function save() {
+    if (!dirty || saving) return
+    setSaving(true)
+    try {
+      await Promise.all(INITIATIVES.map(ini =>
         fetch('/api/checkin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             date: today,
             initiative: ini.id,
-            completed: true,
-            count: 1,
-            mood: nextMood ?? undefined,
-            note: nextNote || undefined,
+            completed: doneToday[ini.id],
+            count: doneToday[ini.id] ? 1 : 0,
+            mood: mood ?? undefined,
+            note: note || undefined,
           }),
         })
       ))
-      fireToast('Saved ✓')
-    }, 800)
+      setDirty(false)
+      fireToast("Saved! Keep going 🌱")
+    } catch {
+      fireToast('Save failed — try again')
+    } finally {
+      setSaving(false)
+    }
   }
 
-  function handleMood(m: Mood) { setMood(m); scheduleMetaSave(m, note) }
-  function handleNote(n: string) { setNote(n); scheduleMetaSave(mood, n) }
-
-  // Sort: priority not-done first, then non-priority not-done, then all done at bottom
   const sorted = useMemo(() => {
     return [...INITIATIVES].sort((a, b) => {
       const da = doneToday[a.id] ? 1 : 0
@@ -132,7 +124,7 @@ export default function TodayPage() {
             initiative={ini}
             done={doneToday[ini.id]}
             streak={streaks[ini.id] ?? 0}
-            saving={!!saving[ini.id]}
+            saving={false}
             onToggle={() => toggle(ini.id)}
           />
         ))}
@@ -195,6 +187,33 @@ export default function TodayPage() {
           }}
         />
       </div>
+
+      {/* Fixed Save button */}
+      <button
+        onClick={save}
+        disabled={!dirty || saving || !loaded}
+        className="fixed left-1/2 z-[200] font-fraunces"
+        style={{
+          bottom: 16,
+          transform: 'translateX(-50%)',
+          width: 'calc(100% - 32px)',
+          maxWidth: 448,
+          background: dirty && !saving ? 'var(--sage)' : 'var(--sage-dark)',
+          color: '#fff',
+          border: 'none',
+          borderRadius: 14,
+          padding: 16,
+          fontSize: 15,
+          fontWeight: 600,
+          letterSpacing: '0.02em',
+          cursor: dirty && !saving ? 'pointer' : 'default',
+          opacity: dirty || saving ? 1 : 0.55,
+          boxShadow: '0 6px 18px rgba(78,107,80,0.35)',
+          transition: 'all 0.2s',
+        }}
+      >
+        {saving ? 'Saving…' : dirty ? "Save today's check-in ✓" : 'All saved'}
+      </button>
 
       <Toast message={toast} />
     </div>

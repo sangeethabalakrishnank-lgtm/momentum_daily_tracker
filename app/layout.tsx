@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className="max-w-[480px] mx-auto pb-8">
+      <body className="max-w-[480px] mx-auto pb-28">
         <HeaderNav />
         <main className="min-h-[calc(100dvh-140px)]">{children}</main>
       </body>
