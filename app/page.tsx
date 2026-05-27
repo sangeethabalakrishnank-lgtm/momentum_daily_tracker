@@ -90,8 +90,10 @@ export default function TodayPage() {
       ))
       const failed = results.filter(r => !r.ok)
       if (failed.length > 0) {
-        console.error('Some saves failed:', await Promise.all(failed.map(r => r.text())))
-        fireToast(`Save failed — ${failed.length} of ${results.length} rows`)
+        const bodies = await Promise.all(failed.map(r => r.json().catch(() => ({}))))
+        const firstCode = bodies[0]?.code ?? bodies[0]?.error ?? 'unknown'
+        console.error('Some saves failed:', bodies)
+        fireToast(`Save failed (${firstCode}) — ${failed.length}/${results.length}`)
         return
       }
       setDirty(false)
