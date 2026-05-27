@@ -1,5 +1,5 @@
 import { Client } from '@notionhq/client'
-import { isoWeek, toISODate } from './date'
+import { isoWeek, toISODate, toLocalISO } from './date'
 import type { Initiative } from './initiatives'
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
@@ -105,7 +105,7 @@ export async function getStreaks(initiatives: string[]): Promise<Record<string, 
     filter: {
       and: [
         { property: 'Completed', checkbox: { equals: true } },
-        { property: 'Date', date: { on_or_after: toISODate(cutoff) } },
+        { property: 'Date', date: { on_or_after: toLocalISO(cutoff) } },
       ],
     },
     sorts: [{ property: 'Date', direction: 'descending' }],
@@ -121,7 +121,7 @@ export async function getStreaks(initiatives: string[]): Promise<Record<string, 
     cursor.setHours(0, 0, 0, 0)
 
     for (let i = 0; i < 90; i++) {
-      const dateStr = toISODate(cursor)
+      const dateStr = toLocalISO(cursor)
       const found = filtered.some(r => r.date === dateStr)
       if (found) {
         streak++

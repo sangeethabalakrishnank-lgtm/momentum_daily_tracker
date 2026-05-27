@@ -1,9 +1,25 @@
+/**
+ * UTC-based ISO date. Use ONLY for Date objects constructed via Date.UTC()
+ * (e.g. inside weekDays). Returns a wrong date for local-tz Date objects in
+ * timezones east of UTC after local midnight.
+ */
 export function toISODate(date: Date): string {
   return date.toISOString().slice(0, 10)
 }
 
+/**
+ * Local-timezone ISO date. Use for any Date that represents the user's
+ * local calendar day (i.e. anything from `new Date()`).
+ */
+export function toLocalISO(date: Date): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
 export function todayISO(): string {
-  return toISODate(new Date())
+  return toLocalISO(new Date())
 }
 
 export function dayOfYear(date: Date): number {

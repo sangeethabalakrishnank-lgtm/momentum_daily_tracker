@@ -74,7 +74,7 @@ export default function TodayPage() {
     if (!dirty || saving) return
     setSaving(true)
     try {
-      await Promise.all(INITIATIVES.map(ini =>
+      const results = await Promise.all(INITIATIVES.map(ini =>
         fetch('/api/checkin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -88,10 +88,17 @@ export default function TodayPage() {
           }),
         })
       ))
+      const failed = results.filter(r => !r.ok)
+      if (failed.length > 0) {
+        console.error('Some saves failed:', await Promise.all(failed.map(r => r.text())))
+        fireToast(`Save failed — ${failed.length} of ${results.length} rows`)
+        return
+      }
       setDirty(false)
       fireToast("Saved! Keep going 🌱")
-    } catch {
-      fireToast('Save failed — try again')
+    } catch (err) {
+      console.error('Save error:', err)
+      fireToast('Save failed — check connection')
     } finally {
       setSaving(false)
     }
